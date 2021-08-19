@@ -143,6 +143,6 @@ stage("Scan Cloud Formation Template with API v2") {
         always {
             // The post section lets you run the publish step regardless of the scan results
             prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
-        }
+       
     }
 }
