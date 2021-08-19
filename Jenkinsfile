@@ -139,7 +139,7 @@ stage("Scan Cloud Formation Template with API v2") {
         sh('chmod +x files/waas_attacks.sh && ./files/waas_attacks.sh')
     }
 	
-    post ('Publish Prisma Cloud Results')
+    stage ('Publish Prisma Cloud Results')
         always {
             // The post section lets you run the publish step regardless of the scan results
             prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
