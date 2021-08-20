@@ -108,6 +108,25 @@ stage("Scan Cloud Formation Template with API v2") {
         print "${SCAN_RESULTS}"
 
 }
+	stage('Checkov') {
+		try {
+	     		withCredentials([
+            				string(
+              				credentialsId: 'bc-api-key',
+              				variable: 'BC_API')
+             			]) {
+			response = sh(script:"checkov --file files/deploy.yml --bc-api-key $BC_API --repo-id <mmizrahi/base-shiftleftdemo> -b main -o junitxml > result.xml || true", returnStdout:true).trim() // -o junitxml > result.xml || true"
+            			}
+		
+	    		response = sh(script:"cat result.xml", returnStdout:true)
+	     		print "${response}"
+             			junit skipPublishingChecks: true, testResults: "result.xml"
+		}	
+		catch (err) {
+            			echo err.getMessage()
+            			echo "Error detected"
+		}
+}
 //   files.each { item ->
 //        stage("Scan IaC file ${item} with twistcli") {
 //            try {
