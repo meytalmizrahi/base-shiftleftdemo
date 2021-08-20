@@ -115,7 +115,7 @@ stage("Scan Cloud Formation Template with API v2") {
               				credentialsId: 'bc-api-key',
               				variable: 'BC_API')
              			]) {
-			response = sh(script:"checkov --file files/deploy.yml --bc-api-key $BC_API --repo-id <mmizrahi/base-shiftleftdemo> -b main -o junitxml > result.xml || true", returnStdout:true).trim() // -o junitxml > result.xml || true"
+			response = sh(script:"checkov --file files/deploy.yml --bc-api-key $BC_API --repo-id <mmizrahi/base-evil.petclinic> -b main -o junitxml > result.xml || true", returnStdout:true).trim() // -o junitxml > result.xml || true"
             			}
 		
 	    		response = sh(script:"cat result.xml", returnStdout:true)
