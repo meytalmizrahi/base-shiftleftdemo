@@ -10,7 +10,7 @@ node {
     }
 
 
-    stage('Check image Git dependencies has no vulnerabilities') {
+    stage('Check Git dependencies has no vulnerabilities') {
         try {
             withCredentials([usernamePassword(credentialsId: 'twistlock_creds', passwordVariable: 'TL_PASS', usernameVariable: 'TL_USER')]) {
                 sh('chmod +x files/checkGit.sh && ./files/checkGit.sh')
@@ -21,6 +21,26 @@ node {
 			throw RuntimeException("Build failed for some specific reason!")
         }
     }
+
+    stage('Scan IaC with BC/Checkov') {
+		try {
+	     		withCredentials([
+            				string(
+              				credentialsId: 'bc-api-key',
+              				variable: 'BC_API')
+             			]) {
+			response = sh(script:"checkov --file files/deploy.yml --bc-api-key $BC_API --repo-id meytalmizrahi/base-shiftleftdemo -b main -o junitxml > result.xml || true", returnStdout:true).trim() // -o junitxml > result.xml || true"
+            			}
+		
+	    		response = sh(script:"cat result.xml", returnStdout:true)
+	     		print "${response}"
+             			junit skipPublishingChecks: true, testResults: "result.xml"
+		}	
+		catch (err) {
+            			echo err.getMessage()
+            			echo "Error detected"
+		}
+}
 
     //$PC_USER,$PC_PASS,$PC_CONSOLE when Galileo is released. 
     stage('Apply security policies (Policy-as-Code) for evilpetclinic') {
@@ -113,25 +133,8 @@ stage("Scan Cloud Formation Template with API v2") {
         print "${SCAN_RESULTS}"
 
 }
-	stage('Scan IaC with BC/Checkov') {
-		try {
-	     		withCredentials([
-            				string(
-              				credentialsId: 'bc-api-key',
-              				variable: 'BC_API')
-             			]) {
-			response = sh(script:"checkov --file files/deploy.yml --bc-api-key $BC_API --repo-id meytalmizrahi/base-shiftleftdemo -b main -o junitxml > result.xml || true", returnStdout:true).trim() // -o junitxml > result.xml || true"
-            			}
-		
-	    		response = sh(script:"cat result.xml", returnStdout:true)
-	     		print "${response}"
-             			junit skipPublishingChecks: true, testResults: "result.xml"
-		}	
-		catch (err) {
-            			echo err.getMessage()
-            			echo "Error detected"
-		}
-}
+
+
 //   files.each { item ->
 //        stage("Scan IaC file ${item} with twistcli") {
 //            try {
@@ -146,6 +149,7 @@ stage("Scan Cloud Formation Template with API v2") {
 //            }
 //        }
 //    }
+
     stage('Deploy evilpetclinic') {
 //       sh 'kubectl create ns evil --dry-run -o yaml | kubectl apply -f -'
 //	sh 'kubectl create ns evil -o yaml | kubectl apply -f -'
