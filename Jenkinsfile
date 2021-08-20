@@ -118,7 +118,7 @@ stage("Scan Cloud Formation Template with API v2") {
         SCAN_STATUS = readJSON text: response
         STATUS = SCAN_STATUS['data']['attributes']['status']
 
-        while  (STATUS == 'processsing'){
+        while  (STATUS == 'processing'){
             response = sh(script:"curl -sq -H 'x-redlock-auth: ${PC_TOKEN}' -H 'Content-Type: application/vnd.api+json' --url https://${AppStack}/iac/v2/scans/${SCAN_ID}/status", returnStdout:true).trim()
             SCAN_STATUS = readJSON text: response
             STATUS = SCAN_STATUS['data']['attributes']['status']
