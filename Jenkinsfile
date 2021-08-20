@@ -130,10 +130,7 @@ stage("Scan Cloud Formation Template with API v2") {
         //response = sh(script:"curl -sq -H 'x-redlock-auth: ${PC_TOKEN}' -H 'Content-Type: application/vnd.api+json' --url https://${AppStack}/iac/v2/scans/${SCAN_ID}/results", returnStdout:true).trim()
         //def SCAN_RESULTS= readJSON text: response
 
-        response = sh(script:"curl -X GET -H 'x-redlock-auth: ${PC_TOKEN}' -H 'Content-Type: application/vnd.api+json' --url https://${AppStack}/iac/v2/scans/${SCAN_ID}/results", returnStdout:true).trim()
-        def SCAN_RESULTS= readJSON text: response
-
-        print "${SCAN_RESULTS}"
+        sh "curl -X GET -H 'x-redlock-auth: ${PC_TOKEN}' -H 'Content-Type: application/vnd.api+json' --url https://${AppStack}/iac/v2/scans/${SCAN_ID}/results"
 
 }
 
