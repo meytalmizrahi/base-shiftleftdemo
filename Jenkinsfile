@@ -108,22 +108,22 @@ stage("Scan Cloud Formation Template with API v2") {
         print "${SCAN_RESULTS}"
 
 }
-
-//    files.each { item ->
-//        stage("Scan IaC file ${item} with twistcli") {
-//            try {
-//                withCredentials([usernamePassword(credentialsId: 'prisma_cloud', passwordVariable: 'PC_PASS', usernameVariable: 'PC_USER')]) {
-//                    //sh "./twistcli iac scan --u $PC_USER --p $PC_PASS --asset-name "Jenkins IaC" --tags env:jenkins --compliance-threshold high --address https://$PC_CONSOLE --files files/${item}"
-//                    sh "./twistcli iac scan --u $PC_USER --p $PC_PASS --type k8s --asset-name evilpetclinic --compliance-threshold medium --address https://$PC_CONSOLE files/${item}"
-//                }
-//            } catch (err) {
-//                echo err.getMessage()
-//                echo "Error detected"
-//				throw RuntimeException("Build failed for some specific reason!")
-//            }
-//	    }
-//    }
-
+//additional step
+    files.each { item ->
+        stage("Scan IaC file ${item} with twistcli") {
+            try {
+                withCredentials([usernamePassword(credentialsId: 'prisma_cloud', passwordVariable: 'PC_PASS', usernameVariable: 'PC_USER')]) {
+                    //sh "./twistcli iac scan --u $PC_USER --p $PC_PASS --asset-name "Jenkins IaC" --tags env:jenkins --compliance-threshold high --address https://$PC_CONSOLE --files files/${item}"
+                    sh "./twistcli iac scan --u $PC_USER --p $PC_PASS --type k8s --asset-name evilpetclinic --compliance-threshold medium --address https://$PC_CONSOLE files/${item}"
+                }
+            } catch (err) {
+                echo err.getMessage()
+                echo "Error detected"
+				throw RuntimeException("Build failed for some specific reason!")
+            }
+	    }
+    }
+//additional step
     stage('Deploy evilpetclinic') {
 //       sh 'kubectl create ns evil --dry-run -o yaml | kubectl apply -f -'
 //	sh 'kubectl create ns evil -o yaml | kubectl apply -f -'
