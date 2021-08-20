@@ -40,30 +40,34 @@ node {
     stage('Scan image with twistcli') {
         try {
 	    sh 'docker pull solalraveh/evilpetclinic:latest'
-            //withCredentials([usernamePassword(credentialsId: 'twistlock_creds', passwordVariable: 'TL_PASS', usernameVariable: 'TL_USER')]) {
-            //    sh 'curl -k -u $TL_USER:$TL_PASS --output ./twistcli https://$TL_CONSOLE/api/v1/util/twistcli'
-            //    sh 'sudo chmod a+x ./twistcli'
-            //    sh "./twistcli images scan --u $TL_USER --p $TL_PASS --address https://$TL_CONSOLE --details solalraveh/evilpetclinic:latest"
-            //}
+        withCredentials([usernamePassword(credentialsId: 'twistlock_creds', passwordVariable: 'TL_PASS', usernameVariable: 'TL_USER')]) {
+            sh 'curl -k -u $TL_USER:$TL_PASS --output ./twistcli https://$TL_CONSOLE/api/v1/util/twistcli'
+            sh 'sudo chmod a+x ./twistcli'
+            sh "./twistcli images scan --u $TL_USER --p $TL_PASS --address https://$TL_CONSOLE --details solalraveh/evilpetclinic:latest"
+        }
 	    // Scan the image
-            prismaCloudScanImage ca: '',
-            cert: '',
-            dockerAddress: 'unix:///var/run/docker.sock',
-            image: 'solalraveh/evilpetclinic:latest',
-            key: '',
-            logLevel: 'info',
-            podmanPath: '',
-            project: '',
-            resultsFile: 'prisma-cloud-scan-results.json',
-            ignoreImageBuildTime:true
-        } catch (err) {
-	    prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+        //    prismaCloudScanImage ca: '',
+        //   cert: '',
+        //    dockerAddress: 'unix:///var/run/docker.sock',
+        //    image: 'solalraveh/evilpetclinic:latest',
+        //    key: '',
+        //    logLevel: 'info',
+        //    podmanPath: '',
+        //    project: '',
+        //    resultsFile: 'prisma-cloud-scan-results.json',
+        //    ignoreImageBuildTime:true
+        catch (err) {
             echo err.getMessage()
             echo "Error detected"
 			throw RuntimeException("Build failed for some specific reason!")
         }
     }
 
+stage ("Scan K8S Yaml Manifest with BC/Checkov") {
+    withDockerContainer (image: bridgecrew/Jenkins_Bridgecrew_runner:latest) {
+        sh "/run.sh cadc031b-f0a7-5fe1-9085-e0801fc52131 https://github.com/rbenavente/shiftleftdemo"
+    }
+}
 
 stage("Scan Cloud Formation Template with API v2") {
 
@@ -108,7 +112,7 @@ stage("Scan Cloud Formation Template with API v2") {
         print "${SCAN_RESULTS}"
 
 }
-	stage('Checkov') {
+	stage('Scan IaC with BC/Checkov') {
 		try {
 	     		withCredentials([
             				string(
