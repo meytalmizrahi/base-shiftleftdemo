@@ -56,6 +56,7 @@ node {
         //    project: '',
         //    resultsFile: 'prisma-cloud-scan-results.json',
         //    ignoreImageBuildTime:true
+        } 
         catch (err) {
             echo err.getMessage()
             echo "Error detected"
