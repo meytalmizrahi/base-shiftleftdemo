@@ -64,11 +64,11 @@ node {
         }
     }
 
-stage ("Scan K8S Yaml Manifest with BC/Checkov") {
-    withDockerContainer (image: 'bridgecrew/jenkins_bridgecrew_runner:latest') {
-        sh "/run.sh cadc031b-f0a7-5fe1-9085-e0801fc52131 https://github.com/meytalmizrahi/base-shiftleftdemo"
-    }
-}
+// stage ("Scan K8S Yaml Manifest with BC/Checkov") {
+    //   withDockerContainer (image: 'bridgecrew/jenkins_bridgecrew_runner:latest') {
+    //    sh "/run.sh cadc031b-f0a7-5fe1-9085-e0801fc52131 https://github.com/meytalmizrahi/base-shiftleftdemo"
+    //}
+//}
 
 stage("Scan Cloud Formation Template with API v2") {
 
