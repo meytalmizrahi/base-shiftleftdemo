@@ -109,12 +109,13 @@ stage("Scan Cloud Formation Template with API v2") {
 
 }
 //additional step
-    files.each { item ->
-        stage("Scan IaC file ${item} with twistcli") {
-            try {
-                withCredentials([usernamePassword(credentialsId: 'prisma_cloud', passwordVariable: 'PC_PASS', usernameVariable: 'PC_USER')]) {
+//    files.each { item ->
+//        stage("Scan IaC file ${item} with twistcli") {
+    stage("Scan IaC file deploy.yaml with twistcli") {
+        try {
+            withCredentials([usernamePassword(credentialsId: 'prisma_cloud', passwordVariable: 'PC_PASS', usernameVariable: 'PC_USER')]) {
                   //  sh "./twistcli iac scan --u $PC_USER --p $PC_PASS --asset-name "Jenkins IaC" --tags env:jenkins --compliance-threshold high --address https://$PC_CONSOLE --files files/${item}"
-                   sh "./twistcli iac scan --u $PC_USER --p $PC_PASS --type k8s --asset-name evilpetclinic --compliance-threshold medium --address https://$TL_CONSOLE --files ${item}"
+            sh "./twistcli iac scan --u $PC_USER --p $PC_PASS --type k8s --asset-name evilpetclinic --compliance-threshold medium --address https://$TL_CONSOLE --files deploy.yaml"
                 }
             } catch (err) {
                 echo err.getMessage()
