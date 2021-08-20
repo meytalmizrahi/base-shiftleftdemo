@@ -123,7 +123,6 @@ stage("Scan Cloud Formation Template with API v2") {
 				throw RuntimeException("Build failed for some specific reason!")
             }
 	    }
-    }
 //additional step
     stage('Deploy evilpetclinic') {
 //       sh 'kubectl create ns evil --dry-run -o yaml | kubectl apply -f -'
