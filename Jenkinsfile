@@ -160,8 +160,15 @@ node {
 //    }
 
     stage('Deploy evilpetclinic') {
-        sh 'kubectl apply -f files/deploy.yml -n evil'
-        sh 'sleep 10'
+        try {
+            sh 'kubectl apply -f files/deploy.yml -n evil'
+            sh 'sleep 10'
+        }
+        catch (err) {
+            echo err.getMessage()
+            echo "Error detected"
+            throw RuntimeException("Build failed for some specific reason!")
+        }
     }
 
     stage('Run bad Runtime attacks') {
