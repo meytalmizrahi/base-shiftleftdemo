@@ -36,6 +36,22 @@ else
   echo "Runtime policy install failed, $status"
 fi
 
+curl -k \
+  -u $TL_USER:$TL_PASS \
+  -H 'Content-Type: application/json' \
+  -X PUT \
+  -d "$waas_payload" \
+   https://$TL_CONSOLE/api/v1/policies/firewall/app/container
+
+status=$?
+
+if [ $status -eq 0 ]
+then
+  echo "Successfully installed container WAAS policies, among which Demo_WAAS_Rule"
+else
+  echo "Container WAAS policy install failed, $status"
+fi
+
 #   Add Vulnerability Policy Rule with Alert Action on Evil Image  #
 #curl -k \
 #  -u $TL_USER:$TL_PASS \
@@ -52,20 +68,3 @@ fi
 #else
 #  echo "Vulnerability policy install failed, $status"
 #fi
-
-
-curl -k \
-  -u $TL_USER:$TL_PASS \
-  -H 'Content-Type: application/json' \
-  -X PUT \
-  -d "$waas_payload" \
-   https://$TL_CONSOLE/api/v1/policies/firewall/app/container
-
-status=$?
-
-if [ $status -eq 0 ]
-then
-  echo "Successfully installed container WAAS policies, among which Demo_WAAS_Rule"
-else
-  echo "Container WAAS policy install failed, $status"
-fi
