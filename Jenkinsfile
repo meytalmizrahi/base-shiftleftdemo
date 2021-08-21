@@ -172,7 +172,7 @@ node {
         sh('chmod +x files/waas_attacks.sh && ./files/waas_attacks.sh')
     }
 
-    stage('Finisj Demo Pipeline') {
+    stage('Finish Demo Pipeline') {
         echo 'Finished Succesfully'
     }
 
