@@ -87,7 +87,7 @@ node {
             ignoreImageBuildTime:true
     }
     
-    stage ('Publish Prisma Cloud Results') {
+    stage ('Publish Prisma Cloud Scan Results') {
             // The post section lets you run the publish step regardless of the scan results
 	    echo 'Publish Prisma Cloud Results'
             prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
@@ -171,6 +171,9 @@ node {
     stage('Run bad HTTP stuff for WAAS to catch') {
         sh('chmod +x files/waas_attacks.sh && ./files/waas_attacks.sh')
     }
-	
+
+    stage('Finisj Demo Pipeline') {
+        echo 'Finished Succesfully'
+    }
 
 }
