@@ -171,7 +171,7 @@ node {
         } 
         catch (err) {
             echo err.getMessage()
-            echo "Error detected"
+            echo "Deployment failed by Prisma Cloud Policy!"
 			throw RuntimeException("Deployment failed by Prisma Cloud Policy!")
         }
         
