@@ -35,12 +35,12 @@ node {
 	    		response = sh(script:"cat result.xml", returnStdout:true)
 	     		print "${response}"
              			junit skipPublishingChecks: true, testResults: "result.xml"
-		}	
+		                }	
 		catch (err) {
             			echo err.getMessage()
             			echo "Error detected"
-		}
-}
+		            }
+    }
 
     //$PC_USER,$PC_PASS,$PC_CONSOLE when Galileo is released. 
     stage('Apply security policies (Policy-as-Code) for evilpetclinic') {
@@ -64,18 +64,7 @@ node {
             sh 'curl -k -u $TL_USER:$TL_PASS --output ./twistcli https://$TL_CONSOLE/api/v1/util/twistcli'
             sh 'sudo chmod a+x ./twistcli'
             sh "./twistcli images scan --u $TL_USER --p $TL_PASS --address https://$TL_CONSOLE --details solalraveh/evilpetclinic:latest"
-        }
-	    // Scan the image
-        //    prismaCloudScanImage ca: '',
-        //   cert: '',
-        //    dockerAddress: 'unix:///var/run/docker.sock',
-        //    image: 'solalraveh/evilpetclinic:latest',
-        //    key: '',
-        //    logLevel: 'info',
-        //    podmanPath: '',
-        //    project: '',
-        //    resultsFile: 'prisma-cloud-scan-results.json',
-        //    ignoreImageBuildTime:true
+            }
         } 
         catch (err) {
             echo err.getMessage()
@@ -84,16 +73,35 @@ node {
         }
     }
 
+    stage ('Prisma Cloud Scan using Jenkins Plugin') {
+        	// Scan the image
+            prismaCloudScanImage ca: '',
+            cert: '',
+            dockerAddress: 'unix:///var/run/docker.sock',
+            image: 'solalraveh/evilpetclinic:latest',
+            key: '',
+            logLevel: 'info',
+            podmanPath: '',
+            project: '',
+            resultsFile: 'prisma-cloud-scan-results.json',
+            ignoreImageBuildTime:true
+    }
+    
+    stage ('Publish Prisma Cloud Results') {
+            // The post section lets you run the publish step regardless of the scan results
+	    echo 'Publish Prisma Cloud Results'
+            prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+       
+    }
 // stage ("Scan K8S Yaml Manifest with BC/Checkov") {
     //   withDockerContainer (image: 'bridgecrew/jenkins_bridgecrew_runner:latest') {
     //    sh "/run.sh cadc031b-f0a7-5fe1-9085-e0801fc52131 https://github.com/meytalmizrahi/base-shiftleftdemo"
     //}
 //}
 
-stage("Scan Cloud Formation Template with API v2") {
+    stage("Scan Cloud Formation Template with API v2") {
 
         def response
-
 
         response = sh(script:"curl -sq -X POST -H 'x-redlock-auth: ${PC_TOKEN}' -H 'Content-Type: application/vnd.api+json' --url https://${AppStack}/iac/v2/scans --data-binary '@scan-asset.json'", returnStdout:true).trim()
 
@@ -133,7 +141,7 @@ stage("Scan Cloud Formation Template with API v2") {
 
         print "${SCAN_RESULTS}"
 
-}
+    }
 
 
 //   files.each { item ->
@@ -152,9 +160,8 @@ stage("Scan Cloud Formation Template with API v2") {
 //    }
 
     stage('Deploy evilpetclinic') {
-//       sh 'kubectl create ns evil --dry-run -o yaml | kubectl apply -f -'
-//	sh 'kubectl create ns evil -o yaml | kubectl apply -f -'
-//        sh 'kubectl delete --ignore-not-found=true -f files/deploy.yml -n evil'
+        sh 'kubectl create ns evil --dry-run -o yaml | kubectl apply -f -'
+        sh 'kubectl delete --ignore-not-found=true -f files/deploy.yml -n evil'
         sh 'kubectl apply -f files/deploy.yml -n evil'
         sh 'sleep 10'
     }
@@ -167,10 +174,5 @@ stage("Scan Cloud Formation Template with API v2") {
         sh('chmod +x files/waas_attacks.sh && ./files/waas_attacks.sh')
     }
 	
-    stage ('Publish Prisma Cloud Results') {
-            // The post section lets you run the publish step regardless of the scan results
-	    echo 'Publish Prisma Cloud Results'
-            prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
-       
-    }
+
 }
