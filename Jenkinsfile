@@ -160,17 +160,21 @@ node {
 //    }
 
     stage('Deploy evilpetclinic') {
-        try {
             sh 'kubectl create ns evil --dry-run -o yaml | kubectl apply -f -'
             sh 'kubectl delete --ignore-not-found=true -f files/deploy.yml -n evil'
             sh 'kubectl apply -f files/deploy.yml -n evil'
             sh 'sleep 10'
         }
+        try {
+	        sh 'kubectl rollout status deployment evilpetclinic --namespace evil'
+            }
+        } 
         catch (err) {
             echo err.getMessage()
             echo "Error detected"
-            throw RuntimeException("Build failed for some specific reason!")
+			throw RuntimeException("Deployment failed by Prisma Cloud Policy!")
         }
+        
     }
 
     stage('Run bad Runtime attacks') {
