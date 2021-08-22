@@ -74,23 +74,23 @@ node {
     }
 
     stage ('Prisma Cloud Scan using Jenkins Plugin') {
-        	// Scan the image
-            prismaCloudScanImage ca: '',
-            cert: '',
-            dockerAddress: 'unix:///var/run/docker.sock',
-            image: 'solalraveh/evilpetclinic:latest',
-            key: '',
-            logLevel: 'info',
-            podmanPath: '',
-            project: '',
-            resultsFile: 'prisma-cloud-scan-results.json',
-            ignoreImageBuildTime:true
+        // Scan the image
+        prismaCloudScanImage ca: '',
+        cert: '',
+        dockerAddress: 'unix:///var/run/docker.sock',
+        image: 'solalraveh/evilpetclinic:latest',
+        key: '',
+        logLevel: 'info',
+        podmanPath: '',
+        project: '',
+        resultsFile: 'prisma-cloud-scan-results.json',
+        ignoreImageBuildTime:true
     }
     
     stage ('Publish Prisma Cloud Scan Results') {
-            // The post section lets you run the publish step regardless of the scan results
+        // The post section lets you run the publish step regardless of the scan results
 	    echo 'Publish Prisma Cloud Results'
-            prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+        prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
        
     }
 // stage ("Scan K8S Yaml Manifest with BC/Checkov") {
