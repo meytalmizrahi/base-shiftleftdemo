@@ -73,7 +73,7 @@ node {
         }
     }
 
-    stage ('Prisma Cloud Scan using Jenkins Plugin') {
+    stage ('Prisma Cloud Scan and Publish to Jenkins') {
         // Scan the image
         prismaCloudScanImage ca: '',
         cert: '',
@@ -85,14 +85,12 @@ node {
         project: '',
         resultsFile: 'prisma-cloud-scan-results.json',
         ignoreImageBuildTime:true
-    }
-    
-    stage ('Publish Prisma Cloud Scan Results') {
+
         // The post section lets you run the publish step regardless of the scan results
 	    echo 'Publish Prisma Cloud Results'
         prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
-       
     }
+    
 // stage ("Scan K8S Yaml Manifest with BC/Checkov") {
     //   withDockerContainer (image: 'bridgecrew/jenkins_bridgecrew_runner:latest') {
     //    sh "/run.sh cadc031b-f0a7-5fe1-9085-e0801fc52131 https://github.com/meytalmizrahi/base-shiftleftdemo"
